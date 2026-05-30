@@ -31,6 +31,7 @@ export class WittyHelpMessage implements StaticMessage {
     ['in', "register your interest when a game begins"],
     ['out', "retract your interest"],
     ['skip', "skip the current prompt"],
+    ['kys', "end the current game immediately"],
     ['notify', "be notified when a new game starts"],
     ['unnotify', "stop being notified when a new game starts"],
     ['scores [day|week|month|year|alltime]', "show the scores from this server (defaults to day)"]
