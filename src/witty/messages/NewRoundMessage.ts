@@ -9,9 +9,12 @@ import { Duration } from '../../duration';
 import { WittyRoundContext } from '../context';
 import { EmbedContent, MessageContent, setFooter, StateStreamMessage } from '../../messages/Message';
 import { pulse } from '../../util';
+import { submitButtonRow } from '../components';
 
 export class NewRoundMessage implements StateStreamMessage {
   readonly type = 'state-stream'
+
+  readonly components = [submitButtonRow()]
 
   constructor(
     readonly context: WittyRoundContext,
@@ -22,10 +25,7 @@ export class NewRoundMessage implements StateStreamMessage {
   get content(): EmbedContent {
     const msg = new Discord.EmbedBuilder()
       .setTitle(this.prompt.formatted)
-      .setDescription(([
-        `Submit by sending a spoiler message (\`||whatever||\`, or \`/spoiler whatever\` on desktop) to this channel`,
-        `**or** by DMing the bot (:point_up: on desktop just click the sender name)`
-      ]).join('\n'))
+      .setDescription(`Click **Submit answer** below and type your response.`)
       .setFooter({ text: this.footer(this.submitDuration) })
 
     if (this.prompt.type === 'caption') {

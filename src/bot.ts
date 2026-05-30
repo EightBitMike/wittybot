@@ -17,12 +17,11 @@ const client = new Discord.Client({
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMessageReactions,
     GatewayIntentBits.DirectMessages,
-    GatewayIntentBits.GuildMembers,
   ],
   partials: [Partials.Message, Partials.Channel, Partials.Reaction, Partials.User],
 })
 
-client.on('ready', () => {
+client.once('clientReady', () => {
   client.user?.setPresence({
     activities: [{
       type: ActivityType.Playing,

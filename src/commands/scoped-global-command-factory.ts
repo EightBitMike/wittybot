@@ -4,7 +4,7 @@ import { ScopedCommand } from "./command";
 import { GuildStates } from "../GuildStates";
 import { CommandFactory } from "./scoped-command-factory";
 import { isNonNull } from '../util';
-import { MessageReceived } from "../discord-events";
+import { InteractionReceived, MessageReceived } from "../discord-events";
 
 export class ScopedGlobalCommandFactory extends GlobalCommandFactory {
   constructor(
@@ -42,6 +42,14 @@ export class ScopedGlobalCommandFactory extends GlobalCommandFactory {
 
           if (commands.length > 1) {
             message.reply(`Sorry, could not establish which server you meant to send this command to`)
+          }
+        }
+      } else if (event.type === InteractionReceived.type) {
+        const guild = event.interaction.guild
+        if (guild) {
+          const command = scopedFactory.process(guilds.getState(guild), event)
+          if (command) {
+            return ScopedCommand(guild, command)
           }
         }
       } else {

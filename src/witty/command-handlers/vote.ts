@@ -1,13 +1,11 @@
-import * as Discord from 'discord.js';
 import { CommandHandler } from '../../commands';
 import { VotingState } from '../state';
 import { Vote } from '../commands';
-import { CompositeAction, FromStateAction, NewState, NullAction, OptionalAction, Send } from '../../actions';
+import { FromStateAction, NewState, NullAction, Send } from '../../actions';
 import { BasicMessage } from '../../messages';
-import { VoteAcceptedMessage } from '../messages';
 
 export const VoteHandler = () => CommandHandler.build.state(VotingState).command(Vote).sync((state, command) => {
-  const { entry, user, message } = command
+  const { entry, user } = command
   if (entry < 1 || state.submissions.length < entry) {
     return Send(user, new BasicMessage(`You must vote between 1 and ${state.submissions.length}`))
   }
@@ -24,17 +22,14 @@ export const VoteHandler = () => CommandHandler.build.state(VotingState).command
     return Send(user, new BasicMessage(`You cannot vote for your own entry`))
   }
 
-  return CompositeAction(
-    OptionalAction(message.channel instanceof Discord.DMChannel && Send(user, new VoteAcceptedMessage(state.prompt, entry, submission.submission))),
-    FromStateAction(state.context.guild, s => {
-      if (s instanceof VotingState && s.context.sameRound(state.context)) {
-        const newState = s.withVote(user, entry)
-        return newState.allVotesIn()
-          ? newState.finish()
-          : NewState(newState)
-      } else {
-        return NullAction()
-      }
-    })
-  )
+  return FromStateAction(state.context.guild, s => {
+    if (s instanceof VotingState && s.context.sameRound(state.context)) {
+      const newState = s.withVote(user, entry)
+      return newState.allVotesIn()
+        ? newState.finish()
+        : NewState(newState)
+    } else {
+      return NullAction()
+    }
+  })
 })

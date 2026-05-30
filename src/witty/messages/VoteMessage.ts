@@ -12,9 +12,12 @@ import { WittyRoundContext } from '../context';
 import { AnyGameState } from '../../state';
 import { MessageContent, StateStreamMessage, setFooter, EmbedContent } from '../../messages/Message';
 import { pulse } from '../../util';
+import { voteButtonRow } from '../components';
 
 export class VoteMessage implements StateStreamMessage {
   readonly type = 'state-stream'
+
+  readonly components = [voteButtonRow()]
 
   constructor(
     readonly context: WittyRoundContext,

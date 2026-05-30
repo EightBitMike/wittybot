@@ -3,7 +3,8 @@ import { EmbedBuilder } from 'discord.js';
 import * as O from 'rxjs';
 import { Observable, Subject } from 'rxjs';
 import { concatMap, filter, map, mergeMap, multicast } from 'rxjs/operators';
-import { DiscordEvent, MessageReceived, ReactionAdded, ReactionRemoved } from './discord-events';
+import { DiscordEvent, InteractionReceived, MessageReceived, ReactionAdded, ReactionRemoved } from './discord-events';
+import { SUBMIT_ID, VOTE_ID, submitModal, voteModal } from './witty/components';
 import { GuildStates } from './GuildStates';
 import { log, loggableError } from './log';
 import { Destination, Message } from "./messages";
@@ -51,8 +52,29 @@ export class DiscordIO {
 
     connectable$.subscribe(([r, u, t]) => log('react-received', { emoji: r.emoji.name, user: u.username ?? 'partial', type: t.type }))
     connectable$.subscribe(([r, u, t]) => log('react-received-user-fetched', { emoji: r.emoji.name, user: u.username, type: t.type }))
-        
-    this.eventStream = O.merge(reactionEvents$, messageStream)
+
+    const interactionEvents$ = new Subject<DiscordEvent>()
+    client.on('interactionCreate', async (interaction) => {
+      try {
+        if (interaction.isButton()) {
+          if (interaction.customId === SUBMIT_ID) {
+            await interaction.showModal(submitModal())
+          } else if (interaction.customId === VOTE_ID) {
+            await interaction.showModal(voteModal())
+          }
+        } else if (interaction.isModalSubmit()) {
+          if (interaction.customId === SUBMIT_ID || interaction.customId === VOTE_ID) {
+            log('interaction-modal-submit', { customId: interaction.customId, user: interaction.user.username })
+            await interaction.reply({ content: '✅ Got it!', flags: Discord.MessageFlags.Ephemeral })
+            interactionEvents$.next(InteractionReceived(interaction))
+          }
+        }
+      } catch (err) {
+        log.error('interaction', loggableError(err))
+      }
+    })
+
+    this.eventStream = O.merge(reactionEvents$, messageStream, interactionEvents$)
   }
 
   send = (destination: Destination, source: Message) => {
@@ -65,14 +87,15 @@ export class DiscordIO {
       })
 
     const embedColor = '#A4218A'
+    const components = source.components
     const toPayload = (content: MessageContent): string | Discord.BaseMessageOptions => {
       if (typeof content === "string") {
-        return content
+        return components ? { content, components } : content
       }
       if (content instanceof EmbedBuilder) {
-        return { embeds: [content.setColor(embedColor)] }
+        return { embeds: [content.setColor(embedColor)], components }
       }
-      return { content: content.content, embeds: [content.embed.setColor(embedColor)], files: content.files }
+      return { content: content.content, embeds: [content.embed.setColor(embedColor)], files: content.files, components }
     }
 
     const send = async (content: MessageContent) => {

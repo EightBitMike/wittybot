@@ -17,6 +17,7 @@ type Common = {
   readonly reactable?: {
     reacts: Discord.EmojiResolvable[]
   }
+  readonly components?: Discord.BaseMessageOptions['components']
 }
 
 export type StaticMessage = Common & {
