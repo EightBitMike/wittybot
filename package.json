@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "main": "dist/bot.js",
   "scripts": {
-    "start": "node --inspect dist/bot.js",
+    "start": "node dist/bot.js",
     "build": "tsc",
     "postinstall": "npm run build",
     "local": "node -r dotenv/config dist/bot.js",
@@ -18,12 +18,10 @@
     "io-ts": "^2.2.9",
     "pg": "^8.3.0",
     "random-js": "^2.1.0",
-    "request": "2.81.0",
     "rxjs": "^6.6.3",
     "wu": "^2.1.0"
   },
   "devDependencies": {
-    "@types/chance": "^1.1.0",
     "@types/node": "^14.0.27",
     "@types/pg": "^7.14.4",
     "@types/ws": "^7.2.6",
