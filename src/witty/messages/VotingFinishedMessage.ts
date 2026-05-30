@@ -54,7 +54,7 @@ export class VotingFinishedMessage implements StaticMessage {
     const leader = this.context.scores.mostPoints()
     const footer = `In the lead: ${leader.users.map(this.memberName).join(' & ')} with ${leader.points} points. Goal: ${this.context.race}`
 
-    const msg = new Discord.MessageEmbed()
+    const msg = new Discord.EmbedBuilder()
       .setTitle(title)
       .setDescription([
         this.prompt.formatted,
@@ -71,8 +71,8 @@ export class VotingFinishedMessage implements StaticMessage {
           }
           return `• ${x.submission} (${name})`
         })
-      ])
-      .setFooter(footer)
+      ].join('\n'))
+      .setFooter({ text: footer })
 
     if (this.prompt.type === 'caption') {
       msg.setThumbnail(this.prompt.prompt)

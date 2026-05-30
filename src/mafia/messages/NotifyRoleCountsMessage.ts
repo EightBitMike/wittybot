@@ -18,10 +18,10 @@ export class NotifyRoleCountsMessage implements StaticMessage {
     const roles = this.players.aliveRoleCounts()
       .map(([role, count]) => `${roleText(role).emoji} ${count} ${pluralise(role, count)}`)
 
-    return new Discord.MessageEmbed()
+    return new Discord.EmbedBuilder()
       .setTitle(`There are ${this.players.alive().length} players left alive`)
-      .addField('Roles', roles, true)
-      .addField('Players', playerNames, true)
+      .addFields({ name: 'Roles', value: roles.join('\n'), inline: true })
+      .addFields({ name: 'Players', value: playerNames.join('\n'), inline: true })
   }
 }
 

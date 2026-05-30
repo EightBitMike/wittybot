@@ -13,7 +13,7 @@ export const OutFactory = () => CommandFactory.build.state(StartingState).proces
   } else if (event.type === ReactionRemoved.type) {
       const { context } = event.message
       if (event.message instanceof GameStartedMessage && context && event.reaction.emoji.name === event.message.inReact) {
-        const member = context.guild.member(event.user)
+        const member = context.guild.members.resolve(event.user)
         if (member) {
           return Out(member)
         }

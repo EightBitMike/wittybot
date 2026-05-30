@@ -1,5 +1,5 @@
 import * as Discord from 'discord.js';
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import * as O from 'rxjs';
 import { Observable, Subject } from 'rxjs';
 import { concatMap, filter, map, mergeMap, multicast } from 'rxjs/operators';
@@ -22,31 +22,31 @@ export class DiscordIO {
 
   constructor(readonly guilds: GuildStates, readonly client: Discord.Client) {
     const messageStream =
-      O.fromEvent<Discord.Message>(client, 'message')
+      O.fromEvent<Discord.Message>(client, 'messageCreate')
         .pipe(
           filter(m => m.author !== client.user && !m.author.bot),
           map(MessageReceived))
 
     const connectable$ = O.merge(
       discordEventObs(client, 'messageReactionAdd')
-        .pipe(map(e => [...e, ReactionAdded] as const)),
+        .pipe(map(([reaction, user]) => [reaction, user, ReactionAdded] as const)),
       discordEventObs(client, 'messageReactionRemove')
-        .pipe(map(e => [...e, ReactionRemoved] as const))
+        .pipe(map(([reaction, user]) => [reaction, user, ReactionRemoved] as const))
     ).pipe(
       filter(([_, u]) => u !== client.user), // ignore reactions from wittybot!
       multicast(new Subject())
-    ) as O.ConnectableObservable<[Discord.MessageReaction, Discord.User | Discord.PartialUser, typeof ReactionAdded | typeof ReactionRemoved]>
+    ) as O.ConnectableObservable<[Discord.MessageReaction | Discord.PartialMessageReaction, Discord.User | Discord.PartialUser, typeof ReactionAdded | typeof ReactionRemoved]>
 
     connectable$.connect()
 
     const reactsWithUser$ = connectable$.pipe(
-      concatMap(([reaction, user, ctor]) => client.users.fetch(user.id, true).then(user => [reaction, user, ctor] as const)),
+      concatMap(([reaction, user, ctor]) => client.users.fetch(user.id).then(user => [reaction, user, ctor] as const)),
     )
 
     const reactionEvents$ = this.sentMessages.pipe(
       filter(x => !!x.source.reactable),
       mergeMap(({sent, source}) => reactsWithUser$.pipe(
-        filter(([reaction]) => reaction.message.id === sent.id && source.reactable!.reacts.includes(reaction.emoji.name)),
+        filter(([reaction]) => reaction.message.id === sent.id && reaction.emoji.name !== null && source.reactable!.reacts.includes(reaction.emoji.name)),
         map(([reaction, user, ctor]) => ctor(reaction, user, source)))))
 
     connectable$.subscribe(([r, u, t]) => log('react-received', { emoji: r.emoji.name, user: u.username ?? 'partial', type: t.type }))
@@ -64,15 +64,19 @@ export class DiscordIO {
         return source.content$(stateStream)
       })
 
-    const send = async (content: MessageContent) => {
-      const embedColor = '#A4218A'
-      if (content instanceof Discord.MessageEmbed) {
-        content.setColor(embedColor)
-      } else if (typeof content !== "string") {
-        content.embed.setColor(embedColor)
+    const embedColor = '#A4218A'
+    const toPayload = (content: MessageContent): string | Discord.BaseMessageOptions => {
+      if (typeof content === "string") {
+        return content
       }
+      if (content instanceof EmbedBuilder) {
+        return { embeds: [content.setColor(embedColor)] }
+      }
+      return { content: content.content, embeds: [content.embed.setColor(embedColor)], files: content.files }
+    }
 
-      const sent = await destination.send(content)
+    const send = async (content: MessageContent) => {
+      const sent = await destination.send(toPayload(content))
 
       this.sentMessages.next({sent, source})
 
@@ -95,8 +99,7 @@ export class DiscordIO {
         if (msg === null) {
           msg = send(x)
         } else {
-          const edit = x instanceof MessageEmbed ? { embed: x } : x
-          msg = msg.then(m => m.edit(edit))
+          msg = msg.then(m => m.edit(toPayload(x)))
         }
       })
   }

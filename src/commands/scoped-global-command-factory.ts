@@ -27,7 +27,7 @@ export class ScopedGlobalCommandFactory extends GlobalCommandFactory {
 
         if (message.channel instanceof Discord.DMChannel) {
           const commands = guilds.all
-            .filter(([guild]) => guild.member(message.author) !== null)
+            .filter(([guild]) => guild.members.resolve(message.author) !== null)
             .map(([guild, state]) => {
               const command = scopedFactory.process(state, event)
               if (command) {

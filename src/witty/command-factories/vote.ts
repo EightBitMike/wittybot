@@ -17,12 +17,10 @@ export const VoteFactory = () => CommandFactory.build.state(VotingState).event(M
     if (spoilered && spoilered[1]) {
       const entry = tryParseInt(spoilered[1].trim())
       if (entry !== null) {
-        try {
-          message.delete({ reason: 'Message recognised as wittybot submission' })
-        } catch (e) {
+        message.delete().catch(e => {
           const error = e instanceof Error ? e.message : 'unknown'
           log.warn('delete_failed', { error })
-        }
+        })
         return Vote(entry, message)
       }
     }

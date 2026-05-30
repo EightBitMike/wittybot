@@ -8,14 +8,14 @@ export class SubmissionAcceptedMessage implements StaticMessage {
   constructor(readonly prompt: Prompt, readonly submission: string, readonly isReplacement: boolean) { }
 
   get content() {
-    const message = new Discord.MessageEmbed()
+    const message = new Discord.EmbedBuilder()
       .setTitle(this.isReplacement ? `Replacement submission accepted` : `Submission accepted`)
       .setDescription([
         this.prompt.formatted,
         ``,
         this.submission
-      ])
-      .setFooter(`Submit again to replace this submission`)
+      ].join('\n'))
+      .setFooter({ text: `Submit again to replace this submission` })
 
 
     if (this.prompt.type === 'caption') {

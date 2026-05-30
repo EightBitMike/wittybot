@@ -38,15 +38,15 @@ export class WinnersMessage implements StaticMessage {
     const byStatus = [...this.players.players].sort((p1, p2) => compareStatus(p1.status, p2.status))
     const [losers, winners] = partition(byStatus, p => p.isOnTeam(this.winningTeam))
 
-    return new Discord.MessageEmbed()
+    return new Discord.EmbedBuilder()
       .setTitle(this.title)
-      .setDescription([
+      .setDescription(([
         `Congratulations to:`,
         ...winners.map(display),
         ``,
         `Better luck next time to:`,
         ...losers.map(display)
-      ])
+      ]).join('\n'))
   }
 
   get title(): string {

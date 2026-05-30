@@ -1,3 +1,4 @@
+import { PermissionFlagsBits } from 'discord.js';
 import { CommandFactory } from '../../commands';
 import { MessageReceived } from '../../discord-events';
 import { Reset } from '../commands/reset';
@@ -8,7 +9,7 @@ export const ResetFactory = () => CommandFactory.build.event(MessageReceived)
       return
     }
 
-    if (!message.member.hasPermission("ADMINISTRATOR")) {
+    if (!message.member.permissions.has(PermissionFlagsBits.Administrator)) {
       message.reply(`Only administrators can reset the bot`)
       return
     }

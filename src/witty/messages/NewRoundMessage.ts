@@ -20,13 +20,13 @@ export class NewRoundMessage implements StateStreamMessage {
   ) { }
 
   get content(): EmbedContent {
-    const msg = new Discord.MessageEmbed()
+    const msg = new Discord.EmbedBuilder()
       .setTitle(this.prompt.formatted)
-      .setDescription([
+      .setDescription(([
         `Submit by sending a spoiler message (\`||whatever||\`, or \`/spoiler whatever\` on desktop) to this channel`,
         `**or** by DMing the bot (:point_up: on desktop just click the sender name)`
-      ])
-      .setFooter(this.footer(this.submitDuration))
+      ]).join('\n'))
+      .setFooter({ text: this.footer(this.submitDuration) })
 
     if (this.prompt.type === 'caption') {
       return {

@@ -1,5 +1,5 @@
 import * as Discord from 'discord.js';
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { Observable } from 'rxjs';
 import { Stream } from 'stream';
 import { GuildContext } from '../context';
@@ -7,10 +7,10 @@ import { AnyGameState } from '../state';
 
 export type Destination = Discord.TextChannel | Discord.User
 
-type Files = (Discord.FileOptions | Discord.BufferResolvable | Stream | Discord.MessageAttachment)[]
+export type Files = (Discord.AttachmentBuilder | Discord.BufferResolvable | Stream | Discord.AttachmentPayload)[]
 export type EmbedContent =
-| Discord.MessageEmbed
-| { content: string, embed: Discord.MessageEmbed, files?: Files }
+| EmbedBuilder
+| { content: string, embed: EmbedBuilder, files?: Files }
 export type MessageContent = string | EmbedContent
 
 type Common = {
@@ -35,10 +35,10 @@ export type Message =
 | StaticMessage
 | StateStreamMessage
 
-const update = (f: (embed: MessageEmbed) => MessageEmbed) => (content: EmbedContent) =>
-  content instanceof Discord.MessageEmbed ? f(content) : { ...content, embed: f(content.embed) }
+const update = (f: (embed: EmbedBuilder) => EmbedBuilder) => (content: EmbedContent) =>
+  content instanceof EmbedBuilder ? f(content) : { ...content, embed: f(content.embed) }
 
 export const setFooter = (footer: string) =>
-  update((embed: MessageEmbed) => embed.setFooter(footer))
+  update((embed: EmbedBuilder) => embed.setFooter({ text: footer }))
 export const setDescription = (description: string | string[]) =>
-  update((embed: MessageEmbed) => embed.setDescription(description))
+  update((embed: EmbedBuilder) => embed.setDescription(Array.isArray(description) ? description.join('\n') : description))

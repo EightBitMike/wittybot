@@ -9,7 +9,7 @@ import { MafiaSettings } from '../context';
 
 export const BeginFactory = () => CommandFactory.build.state(IdleState).event(MessageReceived).process(((_, { message }) => {
   if (message.channel instanceof Discord.TextChannel && /^!mafia\b/.test(message.content)) {
-    const member = message.guild?.member(message.author)
+    const member = message.guild?.members.resolve(message.author)
     if (!member) {
       return
     }

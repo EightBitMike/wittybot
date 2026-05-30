@@ -29,17 +29,16 @@ export class VoteMessage implements StateStreamMessage {
   private readonly users: Discord.User[]
 
   get content(): EmbedContent {
-    const msg = new Discord.MessageEmbed()
+    const msg = new Discord.EmbedBuilder()
       .setTitle(`:timer: Time's up!`)
       .setDescription([
         this.prompt.formatted,
         ``,
         ...this.submissions.map((x, i) => `${i + 1}. ${x.submission}`),
         ``,
-        `Vote for your favourite by sending a spoiler message to this channel`,
-        `**or** by DMing the bot with the entry number`
-      ])
-      .setFooter(this.footer(this.voteDuration, []))
+        `Vote for your favourite with the **Vote** button below`
+      ].join('\n'))
+      .setFooter({ text: this.footer(this.voteDuration, []) })
 
     if (this.prompt.type === 'caption') {
       msg.setThumbnail(this.prompt.prompt)

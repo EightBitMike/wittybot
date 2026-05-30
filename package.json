@@ -12,7 +12,7 @@
     "logs": "heroku logs -a wittyfirebot -t -n 500"
   },
   "dependencies": {
-    "discord.js": "^12.5.1",
+    "discord.js": "^14.26.4",
     "dotenv": "^8.2.0",
     "fp-ts": "^2.8.1",
     "io-ts": "^2.2.9",
@@ -22,10 +22,10 @@
     "wu": "^2.1.0"
   },
   "devDependencies": {
-    "@types/node": "^14.0.27",
+    "@types/node": "^20.19.41",
     "@types/pg": "^7.14.4",
     "@types/ws": "^7.2.6",
     "@types/wu": "^2.1.42",
-    "typescript": "^3.9.7"
+    "typescript": "^5.9.3"
   }
 }

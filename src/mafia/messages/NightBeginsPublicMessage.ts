@@ -14,12 +14,12 @@ export class NightBeginsPublicMessage implements StateStreamMessage {
   constructor(readonly context: MafiaRoundContext) { }
 
   get content(): EmbedContent {
-    return new Discord.MessageEmbed()
+    return new Discord.EmbedBuilder()
       .setTitle(`${Emojis.night} Night ${this.context.nightNumber} Begins!`)
-      .setDescription([
+      .setDescription(([
         `Villagers, you must wait until morning and hope you survive the night!`,
         `Everyone else, you will be DMed with your actions...`
-      ])
+      ]).join('\n'))
   }
 
   footer = secondsRemaining

@@ -12,13 +12,13 @@ export class NotifyRoleMessage implements StaticMessage {
   get content() {
     const { emoji, desc } = roleText(this.role)
     const { day, night } = this.role.commands
-    return new Discord.MessageEmbed()
+    return new Discord.EmbedBuilder()
       .setTitle(`${emoji} ${desc}`)
-      .setDescription([
+      .setDescription(([
         this.partners && `Your partners are: ${this.partners.map(u => mention(u.user)).join(', ')}.`,
         day && commandText(day).desc,
         night && commandText(night).desc
-      ])
+      ]).join('\n'))
   }
 }
 

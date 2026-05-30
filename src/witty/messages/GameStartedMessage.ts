@@ -23,10 +23,10 @@ export class GameStartedMessage implements StateStreamMessage {
   get startedBy() { return this.context.initiator }
 
   get content(): EmbedContent {
-    return new Discord.MessageEmbed()
+    return new Discord.EmbedBuilder()
       .setTitle(`:person_running: It's a race to ${this.context.race}`)
-      .setDescription(this.description([this.startedBy]))
-      .setFooter(this.footer(StartingStateDelay))
+      .setDescription((this.description([this.startedBy])).join('\n'))
+      .setFooter({ text: this.footer(StartingStateDelay) })
   }
 
   description = (interested: Discord.User[]) => [

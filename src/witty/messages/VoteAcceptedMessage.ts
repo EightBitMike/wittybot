@@ -8,14 +8,14 @@ export class VoteAcceptedMessage implements StaticMessage {
   constructor(readonly prompt: Prompt, readonly entry: number, readonly submission: string) { }
 
   get content() {
-    const msg = new Discord.MessageEmbed()
+    const msg = new Discord.EmbedBuilder()
       .setTitle(`Vote recorded for entry ${this.entry}`)
       .setDescription([
         this.prompt.formatted,
         ``,
         this.submission
-      ])
-      .setFooter(`Message again to replace your vote`)
+      ].join('\n'))
+      .setFooter({ text: `Message again to replace your vote` })
 
     if (this.prompt.type === 'caption') {
       msg.setThumbnail(this.prompt.prompt)

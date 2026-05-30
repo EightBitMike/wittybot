@@ -11,12 +11,10 @@ export const SubmitFactory = () => CommandFactory.build.state(SubmissionState).e
   } else if (message.channel === state.context.channel) {
     const spoilered = message.content.match(/^\|\|(.*)\|\|$/)
     if (spoilered && spoilered[1]) {
-      try {
-        message.delete({ reason: 'Message recognised as wittybot submission' })
-      } catch (e) {
+      message.delete().catch(e => {
         const error = e instanceof Error ? e.message : 'unknown'
         log.warn('delete_failed', { error })
-      }
+      })
       return Submit(spoilered[1], message)
     }
   }

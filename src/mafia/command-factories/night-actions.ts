@@ -18,5 +18,6 @@ export const NightActionsFactory = () => CommandFactory.build.state(NightState).
       return
     }
     
+    if (reaction.emoji.name === null) { return }
     return message.getCommand(reaction.emoji.name)
   })

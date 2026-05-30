@@ -7,18 +7,18 @@ export class WittyHelpMessage implements StaticMessage {
   constructor() { }
 
   get content() {
-    return new Discord.MessageEmbed()
+    return new Discord.EmbedBuilder()
       .setTitle(':information_source: Wittybot help')
       .setDescription(`Wittybot is a simple, fast-paced text game where you submit text answers to prompts, then vote for the funniest one.`)
-      .addField('How to play', [
+      .addFields({ name: 'How to play', value: [
         `1. Someone starts a game with the \`!witty\` command`,
         `2. The bot sends a prompt to the channel`,
-        `3. Players have a certain amount of time to submit the funniest thing they can think of (either DM the bot or use \`||spoiler||\` tags in-channel)`,
-        `4. After submissions are in and the time's up, players vote for the funniest entry`,
+        `3. Players have a certain amount of time to submit the funniest thing they can think of — just click the **Submit** button and type your answer`,
+        `4. After submissions are in and the time's up, players vote for the funniest entry with the **Vote** button`,
         `5. Repeat ad infinitum (or until there aren't enough players)`
-      ])
-      .addField('Commands', WittyHelpMessage.commands.map(([command, description]) => `\`!${command}\` - ${description}`))
-      .setFooter(`This incarnation of wittybot was brought to you by monkfish#4812`)
+      ].join('\n') })
+      .addFields({ name: 'Commands', value: WittyHelpMessage.commands.map(([command, description]) => `\`!${command}\` - ${description}`).join('\n') })
+      .setFooter({ text: `This incarnation of wittybot was brought to you by monkfish#4812` })
   }
 
   static commands = [

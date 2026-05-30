@@ -19,6 +19,7 @@ export const VoteFactory = () => CommandFactory.build.state(DayState).event(Reac
       return
     }
 
+    if (reaction.emoji.name === null) { return }
     const target = message.findTarget(reaction.emoji.name)
     if (!target) {
       return

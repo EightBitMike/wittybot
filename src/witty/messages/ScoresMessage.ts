@@ -25,10 +25,10 @@ export class ScoresByRatingMessage implements StaticMessage {
           ``
         ])
 
-    return new Discord.MessageEmbed()
+    return new Discord.EmbedBuilder()
       .setTitle(`:trophy: Scores ${this.timeframe}`)
-      .setDescription(description)
-      .addField('Current rating formula', `\`\`\`score_per_round = points_score * min(points_available / 4, 1)\ntotal_score = score_per_round / max(rounds_played, 20)\`\`\``)
+      .setDescription(description.join('\n'))
+      .addFields({ name: 'Current rating formula', value: `\`\`\`score_per_round = points_score * min(points_available / 4, 1)\ntotal_score = score_per_round / max(rounds_played, 20)\`\`\`` })
   }
 }
 
@@ -38,11 +38,12 @@ export class ScoresByPointsMessage implements StaticMessage {
   constructor(readonly scores: Scores) { }
 
   get content() {
-    return new Discord.MessageEmbed()
+    return new Discord.EmbedBuilder()
       .setTitle(`Scores so far...`)
       .setDescription(
         this.scores.byPointsDescending()
           .map(([u, s], i) => `${i + 1}. **${s.totalPoints} points**: ${mention(u)}`)
+          .join('\n')
       )
   }
 }

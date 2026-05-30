@@ -7,18 +7,18 @@ export class MafiaHelpMessage implements StaticMessage {
   readonly type = 'static'
 
   get content() {
-    return new Discord.MessageEmbed()
+    return new Discord.EmbedBuilder()
       .setTitle(`${Emojis.info} Mafia help`)
       .setDescription(`A simple mafia game for discord`)
-      .addField('How to play', [
+      .addFields({ name: 'How to play', value: [
         `1. Someone starts a game with the \`!mafia\` command`,
         `2. Players join the game (it can be started early with \`!start\`)`,
         `3. Each player is assigned a role (see below) and can take certain actions`,
         `4. The game alternates between night mode and day mode, during which players can take their actions`,
         `5. The goal is to be the last team remaining`
-      ])
-      .addField('Commands', MafiaHelpMessage.commands.map(([command, description]) => `\`!${command}\` - ${description}`))
-      .setFooter(`This incarnation of wittybot was brought to you by monkfish#4812`)
+      ].join('\n') })
+      .addFields({ name: 'Commands', value: MafiaHelpMessage.commands.map(([command, description]) => `\`!${command}\` - ${description}`).join('\n') })
+      .setFooter({ text: `This incarnation of wittybot was brought to you by monkfish#4812` })
   }
 
   static commands = [
@@ -37,7 +37,7 @@ export class MafiaHelpRolesMessage implements StaticMessage {
   readonly type = 'static'
 
   get content() {
-    return new Discord.MessageEmbed()
+    return new Discord.EmbedBuilder()
       .setTitle(`${Emojis.info} Mafia roles`)
       .setDescription(`Each player is assigned a role at the start of the game. During the day, players vote to execute any one player, and during the night players may perform an action according to their role.`)
       .addFields(
@@ -49,10 +49,10 @@ export class MafiaHelpRolesMessage implements StaticMessage {
             value: [
               desc,
               night && `• **${commandText(night).verb}**: ${commandText(night).desc}`
-            ]
+            ].filter(Boolean).join('\n')
           }
         })
       )
-      .setFooter(`This incarnation of wittybot was brought to you by monkfish#4812`)
+      .setFooter({ text: `This incarnation of wittybot was brought to you by monkfish#4812` })
   }
 }

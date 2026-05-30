@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { EmbedContent, Emojis, mention, StaticMessage } from "../../messages";
 import { MafiaRoundContext } from '../context';
 import { Player } from '../model/Player';
@@ -13,7 +13,7 @@ export class NightEndsPublicMessage implements StaticMessage {
   ) { }
 
   get content(): EmbedContent {
-    return new MessageEmbed()
+    return new EmbedBuilder()
       .setTitle(`${Emojis.sunrise} Night ${this.context.nightNumber} Ends...`)
       .setDescription(this.description)
   }
@@ -34,6 +34,6 @@ export class NightEndsPublicMessage implements StaticMessage {
     return [
       `Deaths last night:`,
       ...this.killed.map(display)
-    ]
+    ].join('\n')
   }
 }

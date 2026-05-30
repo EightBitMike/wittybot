@@ -1,14 +1,17 @@
 {
   "compilerOptions": {
-    "target": "es2019", 
+    "target": "es2021",
+    "lib": ["es2021"],
     "module": "commonjs",
+    "moduleResolution": "node",
     "outDir": "dist",
-    "removeComments": true, 
+    "removeComments": true,
     "strict": true,
     "strictNullChecks": true,
     "noImplicitThis": true,
     "inlineSourceMap": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "include": [
     "src"

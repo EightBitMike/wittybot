@@ -24,6 +24,7 @@ export const RetractNightActionFactory = () => CommandFactory.build.state(NightS
       return
     }
 
+    if (reaction.emoji.name === null) { return }
     const command = message.getCommand(reaction.emoji.name)
     if (!command || intention.type !== command.type || intention.target !== command.target) {
       return

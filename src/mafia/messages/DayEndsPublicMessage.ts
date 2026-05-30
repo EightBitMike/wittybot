@@ -21,11 +21,11 @@ export class DayEndsPublicMessage implements StaticMessage {
       return basic
     }
     
-    return new Discord.MessageEmbed()
+    return new Discord.EmbedBuilder()
       .setTitle(`${Emojis.sunset} Day ${this.context.dayNumber} Ends...`)
-      .setDescription([
+      .setDescription(([
         this.killed ? `A decision has been made!` : `No decision could be made!`,
         ...(this.killed ? [``, `${display(this.killed)} has been executed according to the will of the people`] : [])
-      ])
+      ]).join('\n'))
   }
 }

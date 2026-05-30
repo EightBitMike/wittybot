@@ -9,10 +9,8 @@ export const makeNotify = (notifyRoleName: string) => {
 
     try {
       return await guild.roles.create({
-        data: {
-          name: notifyRoleName,
-          mentionable: true
-        },
+        name: notifyRoleName,
+        mentionable: true,
         reason: `Notification role for ${notifyRoleName}`
       })
     } catch {

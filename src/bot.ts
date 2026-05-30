@@ -1,4 +1,5 @@
 import * as Discord from 'discord.js'
+import { GatewayIntentBits, Partials, ActivityType, BaseGuildTextChannel } from 'discord.js'
 import { Engine } from './engine';
 import { Send } from './actions';
 import { BasicMessage } from './messages';
@@ -9,14 +10,24 @@ import { IdleState } from './state';
 
 log('loading')
 
-const client = new Discord.Client();
+const client = new Discord.Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.GuildMembers,
+  ],
+  partials: [Partials.Message, Partials.Channel, Partials.Reaction, Partials.User],
+})
 
 client.on('ready', () => {
   client.user?.setPresence({
-    activity: {
-      type: 'PLAYING',
+    activities: [{
+      type: ActivityType.Playing,
       name: '!help'
-    }
+    }]
   })
 
   const testMode = process.env.TEST_MODE === "true"
@@ -29,7 +40,7 @@ client.on('ready', () => {
   process.on('SIGTERM', () => {
     log.error('sigterm')
     engine.guilds.all.forEach(([_, state]) => {
-      if (!(state instanceof IdleState) && state.context.channel instanceof Discord.Channel) {
+      if (!(state instanceof IdleState) && state.context.channel instanceof BaseGuildTextChannel) {
         engine.executor.execute(Send(state.context.channel, new BasicMessage(`Sorry! The bot has to shut down, it should be back momentarily but you will have to restart the game`)))
       }
     })

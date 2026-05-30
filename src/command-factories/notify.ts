@@ -6,7 +6,7 @@ export const NotifyFactory = () => new GlobalCommandFactory(event => {
   if (event.type === ReactionAdded.type) {
     const {user, reaction, message} = event
     if (message instanceof RoleMentionNotifyMessage) {
-      const member = message.role.guild.member(user)
+      const member = message.role.guild.members.resolve(user)
       if (!member) {
         return
       }

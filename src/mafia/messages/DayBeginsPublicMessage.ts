@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { Observable } from 'rxjs';
 import { endWith, map, scan, takeWhile } from 'rxjs/operators';
 import wu from 'wu';
@@ -32,9 +32,9 @@ export class DayBeginsPublicMessage implements StateStreamMessage {
   }
 
   get content(): EmbedContent {
-    return new MessageEmbed()
+    return new EmbedBuilder()
       .setTitle(`${Emojis.day} Day ${this.context.dayNumber} Begins!`)
-      .setDescription(this.description(new Votes(new Map)))
+      .setDescription((this.description(new Votes(new Map))).join('\n'))
   }
 
   description = (votes: Votes) => {

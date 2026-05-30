@@ -41,9 +41,9 @@ export class NightRoleMessage implements StateStreamMessage {
   }
 
   get content(): EmbedContent {
-    return new Discord.MessageEmbed()
+    return new Discord.EmbedBuilder()
       .setTitle(`${roleText(this.player.role).emoji} Night ${this.context.nightNumber} - Choose someone to ${commandText(this.command).verb}`)
-      .setDescription(this.description(this.initialState))
+      .setDescription((this.description(this.initialState)).join('\n'))
   }
 
   description = (state: NightState) => {
