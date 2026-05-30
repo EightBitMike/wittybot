@@ -2,15 +2,9 @@ import { interval, Observable } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
 import { Duration } from "./duration";
 
-export const tryParseInt = (str: string) => {
-  try {
-    const entry = Number.parseInt(str)
-    if (!isNaN(entry)) {
-      return entry
-    }
-  } catch {
-  }
-  return null
+export const tryParseInt = (str: string): number | null => {
+  const entry = Number.parseInt(str)
+  return isNaN(entry) ? null : entry
 }
 
 export function getOrSet<Key, Value>(map: Map<Key, Value>, key: Key, value: () => Value): Value {
@@ -24,6 +18,13 @@ export function getOrSet<Key, Value>(map: Map<Key, Value>, key: Key, value: () =
 
 export function clamp(x: number, min: number, max: number) {
   return Math.max(min, Math.min(x, max))
+}
+
+export const parseClampedArg = (content: string, regex: RegExp, lo: number, hi: number): number | null => {
+  const match = regex.exec(content)
+  if (!match) return null
+  const n = tryParseInt(match[1])
+  return n === null ? null : clamp(n, lo, hi)
 }
 
 export function* pairs<T>(array: T[]): Generator<readonly [T, T]> {
@@ -110,45 +111,13 @@ export type Items<T extends any[]> = T extends (infer V)[] ? V : never
 
 export const chain = <A>(...functions: ((a: A) => A)[]) => (a: A) => functions.reduce((a, f) => f(a), a)
 
-const nothing = Symbol()
-export const buildScan = <A, Acc>(onFirst: (a: A) => Acc, onNext: (acc: Acc, a: A) => Acc) =>
-  (input: Observable<A>) => 
-    new Observable<Acc>(sub => {
-      let acc: Acc | typeof nothing = nothing
-      input.subscribe(
-        x => {
-          if (acc === nothing) {
-            acc = onFirst(x)
-          } else {
-            acc = onNext(acc, x)
-          }
-          sub.next(acc)
-        },
-        e => sub.error(e),
-        () => sub.complete()
-      )
-    })
-
-export const immediateInterval = (duration: Duration): Observable<number> =>
+const immediateInterval = (duration: Duration): Observable<number> =>
   interval(duration.milliseconds)
     .pipe(startWith(0))
 
 /** repeats values from the input at intervals until a new value is emitted */
 export const pulse = <A>(obs: Observable<A>, freq: Duration): Observable<A> =>
   obs.pipe(switchMap(s => immediateInterval(freq).pipe(map(_ => s))))
-
-export type Lazy<A> = { readonly value: A}
-export function lazy<A>(f: () => A): Lazy<A> {
-  let x: A | typeof nothing = nothing
-  return {
-    get value() {
-      if (x === nothing) {
-        x = f()
-      }
-      return x
-    }
-  }
-}
 
 export function partition<A, B extends A>(list: A[], predicate: (a: A) => a is B): [Exclude<A, B>[], B[]]
 export function partition<A>(list: A[], predicate: (a: A) => boolean): [A[], A[]]

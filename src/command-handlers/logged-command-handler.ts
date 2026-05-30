@@ -48,10 +48,6 @@ export function logCommand(input: Command) {
       toLog.push(logUser(command.user), { entry: command.entry })
       break
 
-    case Mafia.Begin.type:
-      toLog.push(logUser(command.user))
-      break;
-
     case Mafia.Distract.type:
     case Mafia.Kill.type:
     case Mafia.Protect.type:

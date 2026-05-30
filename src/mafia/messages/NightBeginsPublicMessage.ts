@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { endWith, map, scan, takeWhile } from 'rxjs/operators';
 import { Duration } from "../../duration";
 import { EmbedContent, Emojis, MessageContent, setFooter, StateStreamMessage } from '../../messages';
+import { secondsRemaining } from '../../messages/remaining';
 import { AnyGameState } from "../../state";
 import { pulse } from '../../util';
 import { MafiaRoundContext } from '../context';
@@ -21,7 +22,7 @@ export class NightBeginsPublicMessage implements StateStreamMessage {
       ])
   }
 
-  footer = (remaining: Duration) => `${remaining.seconds} seconds remaining`
+  footer = secondsRemaining
 
   content$ = (stateStream: Observable<AnyGameState>): Observable<MessageContent> =>
     pulse(stateStream, Duration.seconds(5))

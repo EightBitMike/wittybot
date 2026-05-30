@@ -1,6 +1,3 @@
-import { Subscriber } from "rxjs"
-import { tap } from "rxjs/operators"
-
 export type Loggable = {
   [key: string]: string | number | boolean | undefined | null
 } | undefined | null
@@ -22,14 +19,6 @@ log.warn = function (event: string, ...loggables: Loggable[]) {
 }
 log.error = function(event: string, ...loggables: Loggable[]) {
   console.error(makeString(event, loggables))
-}
-
-export function logTap<T>(event: string) {
-  return tap<T>(new Subscriber(
-    x => log.debug(event),
-    _ => log.debug(event + '-error'),
-    () => log.debug(event + '-complete')
-  ))
 }
 
 function makeString(event: string, loggables: Loggable[]) {

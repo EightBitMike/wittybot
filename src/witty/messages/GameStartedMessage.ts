@@ -3,6 +3,7 @@ import { concat, Observable } from 'rxjs';
 import { map, scan, skipWhile, take, takeWhile } from 'rxjs/operators';
 import { Duration } from '../../duration';
 import { EmbedContent, Emojis, mention, MessageContent, setDescription, setFooter, StateStreamMessage } from '../../messages';
+import { minutesOrSecondsRemaining } from '../../messages/remaining';
 import { AnyGameState } from '../../state';
 import { IdleState } from '../../state/IdleState';
 import { chain, isType, pulse } from '../../util';
@@ -35,10 +36,7 @@ export class GameStartedMessage implements StateStreamMessage {
     ...interested.map(x => `• ${mention(x)}`)
   ]
 
-  footer = (remaining: Duration) =>
-    remaining.isGreaterThan(Duration.minutes(1))
-      ? `${remaining.minutes} minutes remaining`
-      : `${remaining.seconds} seconds remaining`
+  footer = minutesOrSecondsRemaining
 
   content$ = (stateStream$: Observable<AnyGameState>): Observable<MessageContent> => {
     const startingState$ = pulse(stateStream$, Duration.seconds(5))

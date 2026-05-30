@@ -4,6 +4,7 @@ import { endWith, map, scan, takeWhile } from 'rxjs/operators';
 import wu from 'wu';
 import { Duration } from "../../duration";
 import { CommandReacts, EmbedContent, Emoji, Emojis, mention, Message, MessageContent, setDescription, setFooter, StateStreamMessage } from "../../messages";
+import { secondsRemaining } from '../../messages/remaining';
 import { shuffle } from '../../random';
 import { AnyGameState } from "../../state";
 import { chain, isType, pulse } from '../../util';
@@ -55,7 +56,7 @@ export class DayBeginsPublicMessage implements StateStreamMessage {
     ]
   }
 
-  footer = (remaining: Duration) => `${remaining.seconds} seconds remaining`
+  footer = secondsRemaining
 
   content$ = (stateStream: Observable<AnyGameState>): Observable<MessageContent> =>
     pulse(stateStream, Duration.seconds(5))
